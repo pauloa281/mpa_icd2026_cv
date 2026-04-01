@@ -1,6 +1,6 @@
 # Arquivo: 02-dados-organizados-joins.R
-# Autor(a): seu nome
-# Data: dd/mm/aaaa
+# Autor(a): Paulo Aragão Daldegan
+# Data: 26/03/2026
 # Objetivo:
 #  1. Aprender a função pivot_longer() do pacote tidyr
 #  2. Aprender joins essenciais do pacote dplyr
@@ -69,6 +69,7 @@ desempenho_longo <- desempenho |>
 
 # exibe o objeto
 desempenho_longo
+View(desempenho_longo)
 
 
 # Exemplo 3
