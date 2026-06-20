@@ -281,7 +281,7 @@ es_monetario
 
 # interpretação
 # O VaR da carteira (o limiar de perda a p = 1%) foi de 2,48%, com um perda monetária de R$ 2482,90
-# O ES, referente a média das perdas na cauda além do VaR, foi de 3,15% ou R$ 3157,10.
+# O ES da carteira, referente a média das perdas na cauda além do VaR, foi de 3,15% ou R$ 3157,10.
 # Ele tende a ser maior justamente por se localizar além do VaR, sendo uma média além do valor do VaR,
 # assim captando perdas até mais extremas que o limiar de 1% do VaR.
 
