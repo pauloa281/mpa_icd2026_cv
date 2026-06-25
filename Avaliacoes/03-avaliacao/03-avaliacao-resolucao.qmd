@@ -1,0 +1,116 @@
+---
+lang: pt-BR
+title: "Resolução Avaliação 3"
+subtitle: "Introdução à Ciência de Dados - 2026/1 <br> Mestrado Profissional em Administração"
+author: "Paulo Aragão Daldegan"
+date: 2026-06-25
+date-format: long
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+
+```{r}
+#| label: setup
+#| echo: true
+
+# configura a exibição de números
+options(digits = 3, scipen = 99)
+
+# Carrega os pacotes necessários
+library(here) # para usar caminhos relativos de arquivos
+library(tidyverse)  # Inclui readr, dplyr, tidyr, ggplot2, etc.
+```
+
+
+
+# Questão 1 
+
+
+**a)** 
+
+```{r}
+# caminhos relativos dos arquivos CSV
+instituicoes_financeiras_csv <- here("data/raw/instituicoes_financeiras.csv")
+indicadores_contabeis_csv <- here("data/raw/indicadores_contabeis.csv")
+carteira_credito_csv <- here("data/raw/carteira_credito.csv")
+
+# importacao dos arquivos CSV
+instituicoes_financeiras <- read_csv(instituicoes_financeiras_csv)
+indicadores_contabeis <- read_csv(indicadores_contabeis_csv)
+carteira_credito <- read_csv(carteira_credito_csv)
+
+# pipeline para combinar as 3 tabelas
+dados_financeiros <- indicadores_contabeis |>
+  # primeiro join: adiciona a carteira de credito
+  left_join(carteira_credito, by = c("id_instituicao", "ano")) |>
+  # segundo join: adiciona o cadastro das instituicoes
+  left_join(instituicoes_financeiras, by = "id_instituicao")
+
+# verifica a estrutura dos dados combinados
+glimpse(dados_financeiros)
+
+# exibe as 10 primeiras linhas
+head(dados_financeiros, n = 10)
+```
+
+
+
+
+**b)** 
+
+```{r}
+# resumo por instituicao
+resumo_instituicoes <- dados_financeiros |>
+  # cria o indicador de rentabilidade
+  mutate(roa = resultado_liquido / ativo_total) |>
+  # agrupa pelo codigo e pelo nome da instituicao
+  group_by(id_instituicao, nome_instituicao) |>
+  # calcula as médias agrupadas do periodo 
+  summarise(
+    media_ativo_total = mean(ativo_total, na.rm = TRUE),
+    media_carteira_credito = mean(carteira_credito, na.rm = TRUE),
+    media_inadimplencia = mean(inadimplencia, na.rm = TRUE),
+    roa_medio = mean(roa, na.rm = TRUE)
+  ) |>
+  # seleciona as variaveis finais
+  select(id_instituicao, nome_instituicao, media_ativo_total, media_carteira_credito, media_inadimplencia, roa_medio)
+
+# verifica a estrutura do resumo
+glimpse(resumo_instituicoes)
+
+# exibe as 10 primeiras linhas
+head(resumo_instituicoes, n = 10)
+```
+
+
+
+
+
+# Questão 2 
+
+
+**a.** 
+A distinção se dá em que na maioria das pesquisas, os pesquisadores procuram obter estimativas pontuais e o grau de incerteza associado ao "fenômeno" de interesse, para em cima disso, tirarem suas conclusões e indicarem implementações de novas políticas, principalmente na area econômica. Nesses casos, saber a siginificância estatística para saber se rejeita a hipótese nula pode não ser relevante.Além disso, * não basta um valor-p pequeno, deve existir contexto científico, crenças anteriores (priori) e qualidade do estudo. Olhar apenas para as estrelas de significância ignora o tamanho do efeito, precisão e contexto, não sendo tão relevante para uma análise efetiva dos dados.
+
+
+**b.** 
+Segundo o autor, uma apresentação de estimativas e incertezas para uma tomada de decisão é relevante a estimativa pontual acompanhada de alguma medida de incerteza desta estimativa, além de avaliação de robustez e questões de identificação, sendo a divulgação de teste de hipóteses e valores p irrelevantes.
+
+Quando se trata de testes de hipótese, como hipótese de renda permanente, eficiência de mercados, etc; valores p podem ser úteis para avaliar se os dados disponíveis fornecem evidências claras contra essas teorias. A decisão consiste em saber se determinada questão científica merece investigação 
+adicional, sendo diferente de serem usadas para tomar decisões.
+
+Para o p-hacking, pode-se realizar de estudos de replicação para  investigar quais decisões metodológicas foram tomadas durante o processo que levou ao resultado estatisticamente significativo. Além disso, reduzir a ênfase nos valores-p pode reduzir a sua frequência. Em alguns contextos, pode ser feito o registro prévio de um plano de pré-análise, especificando como os dados serão analisados.
+
+
+
+
+
